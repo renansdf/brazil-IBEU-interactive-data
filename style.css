@@ -1,0 +1,316 @@
+/*
+
+Theme Name: Salient Child Theme
+
+Description: This is a custom child theme for Salient
+
+Theme URI:   https://themeforest.net/item/salient-responsive-multipurpose-theme/4363266
+
+Author: ThemeNectar
+
+Author URI:  https://themeforest.net/user/themenectar
+
+Template: salient
+
+Version: 1.0
+
+*/
+
+#top{
+  padding: 20px 0;
+}
+
+.heading-container h1{
+    font-size: 150px;
+    line-height: 1.1em;
+}
+
+.heading-description h3{
+    line-height: 1.3em!important;
+    font-size: 30px!important;
+}
+
+.color-white h3{
+    color: #fff;
+}
+
+#search-municipio{
+    width: 100%;
+    max-width: 600px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 auto;
+}
+
+.list-heading {
+    background: #003159;
+    color: #fff;
+    font-weight: 400;
+}
+
+.list-heading.no-margin{
+    margin-bottom: 0;
+}
+
+.list-heading div{
+    width: 100%;
+    font-size: 16px;
+    letter-spacing: .5px;
+    text-align: center;
+}
+
+.list-heading div.left{
+    text-align: left;
+}
+
+.list-heading div.w-50{
+    width: 50%;
+}
+
+.list-heading div.w-40{
+    width: 40%;
+}
+
+.list-heading div.w-30{
+    width: 30%;
+}
+
+.list-heading div.w-20{
+    width: 20%;
+}
+
+.list-heading div.w-10{
+    width: 10%;
+}
+
+.list-heading div.active{
+    background-color: #efefef;
+    border-radius: 30px;
+    color: #003159;
+    font-weight: bold;
+}
+
+ul#municipios-view-wrapper, ul#municipios-map-wrapper{
+    margin-left: 0;
+}
+
+ul#municipios-view-wrapper{
+    margin-top: 50px;
+}
+
+#municipios-view-wrapper li, #municipios-map-wrapper li, .list-heading{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 3px 10px;
+}
+
+#municipios-view-wrapper li div, #municipios-map-wrapper li div{
+    width: 10%;
+    line-height: 1.2em;
+    text-align: center;
+}
+
+#municipios-map-wrapper li div{
+    width: 30%;
+}
+
+#municipios-view-wrapper li div.left, #municipios-map-wrapper li div.left{
+    text-align: left;
+}
+
+#municipios-view-wrapper li div.isScore, #municipios-map-wrapper li div.isScore{
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 25px;
+    width: 9%;
+    margin-right: 1%;
+}
+
+#municipios-map-wrapper li div.isScore{
+    width: 20%;
+    margin-right: 0%;
+}
+
+#municipios-view-wrapper li div:first-child{
+    width: 20%;
+}
+
+#municipios-map-wrapper li div:first-child{
+    width: 50%;
+    font-size: 14px;
+    letter-spacing: 0px;
+}
+
+#municipios-view-wrapper li div:last-child{
+    margin-right: 0;
+}
+
+li.municipio-li.list-title div{
+    width: 100%!important;
+    letter-spacing: 2px!important;
+    font-weight: 300;
+    margin: 10px 0 0;
+    background: #002849;
+    color: #fff;
+    font-size: 13px!important;
+    padding: 3px 11px;
+    border-radius: 26px;
+}
+
+.page-title{
+    text-align: center;
+    margin-top: 25px;
+    color: #003159;
+    font-size: 20px;
+}
+
+#order-container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 5px;
+}
+
+#order-container button{
+    margin: 0 10px 5px;
+    border: none;
+    padding: 5px 10px;
+    color: #003159;
+    letter-spacing: .5px;
+    font-size: 15px;
+    transition: all .3s;
+    cursor: pointer;
+}
+
+#order-container button:hover, #order-container button.active{
+    background-color: #003159;
+    color: #fff;
+}
+
+#map{
+    max-width: 660px;
+}
+
+.leg-bar{
+    width: 100%;
+    background-color: #fff;
+    bottom: 0px;
+    right: 0px;
+    left: 0px;
+    top: auto;
+    z-index: 12;
+    margin: 30px 0 0px;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px 5% 30px;
+}
+
+.leg-item{
+    margin: 0 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.leg-item::before{
+    content: '';
+    width: 20px;
+    height: 10px;
+    display: block;
+    margin-right: 5px;
+    background: #000;
+    border-radius: 50px;
+}
+
+.leg-title::before{content: none}
+.leg-vermelho::before{background-color: #f22c00;}
+.leg-amarelo::before{background-color: #eff200;}
+.leg-verde::before{background-color: #00b146;}
+.leg-azul-claro::before{background-color: #3dc7ff;}
+.leg-azul::before{background-color: #0066ea;}
+
+.popup-container{
+    text-align: left;
+}
+
+.popup-container span{
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
+#map-ranking-interface.active{
+    display: block;
+}
+
+#map-initial-interface.hide, #map-ranking-interface{
+    display: none;
+}
+
+#map-initial-interface{
+    padding: 20px;
+}
+
+#map_outer.active{
+    background-color: red;
+    border-radius: 60px;
+    width: 50px;
+    height: 50px;
+    padding: 5px 0 0;
+}
+
+#pagination{
+    margin: 0 auto 40px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#pagination div{
+    font-size: 18px;
+    padding: 4px 13px;
+    margin: 0;
+    color: #003159;
+    cursor: pointer;
+    transition: all .4s;
+}
+
+#pagination div:hover, #pagination div.active{
+    background: #003159;
+    color: #fff;
+}
+
+
+
+
+/* 
+
+    DON'T CHANGE NEW STYLES BELOW THIS LINE
+
+*/
+
+#state-url, #map-ranking-interface button{
+    background-color: #00416d;
+    color: #ffffff;
+    padding: 12px 15px;
+    border-radius: 4px;
+    display: inline-block;
+    font-size: 16px;
+}
+
+#map-ranking-interface button{
+    background-color: #00416d;
+    color: #ffffff;
+    padding: 6px 10px;
+    border-radius: 4px;
+    display: inline-block;
+    font-size: 13px;
+    margin-bottom: 10px;
+    border: none;
+}
