@@ -47,6 +47,10 @@ function generateShortListItemHtml(id, name, rank, ibeu) {
   return `<li class="municipio-li" id="${id}"><div class="left">${name}</div><div>${rank}</div><div class="isScore" style="background-color: ${scoreHexColor(ibeu, true)}; color: ${scoreHexColor(ibeu, false, true)}">${ibeu.toFixed(3)}</div>`;
 }
 
+function generateListTitle(text) {
+  return `<li class="municipio-li list-title"><div class="left">${text}</div></div>`;
+}
+
 function generatePinHtml(rank, ibeu, d1, d2, d3, d4, d5) {
   return `<div class="popup-container"><div>Ranking: ${rank}</div><div>IBEU: <span style="background-color: ${scoreHexColor(ibeu, true)}; color: ${scoreHexColor(ibeu, false, true)}">${ibeu.toFixed(3)}<span></div><div>Mobilidade: <span style="background-color: ${scoreHexColor(d1, true)}; color: ${scoreHexColor(d1, false, true)}">${d1.toFixed(3)}</span></div><div>Ambiental: <span style="background-color: ${scoreHexColor(d2, true)}; color: ${scoreHexColor(d2, false, true)}">${d2.toFixed(3)}</span></div><div>Habitacional: <span style="background-color: ${scoreHexColor(d3, true)}; color: ${scoreHexColor(d3, false, true)}">${d3.toFixed(3)}</span></div><div>Serviços: <span style="background-color: ${scoreHexColor(d4, true)}; color: ${scoreHexColor(d4, false, true)}">${d4.toFixed(3)}</span></div><div>Infraestrutura: <span style="background-color: ${scoreHexColor(d5, true)}; color: ${scoreHexColor(d5, false, true)}">${d5.toFixed(3)}</span></div></div>`
 }
@@ -63,10 +67,34 @@ function sortMunicipiosBy(sortKey) {
 
 function getBestAndWorstOfUf(ufName) {
   const region = municipios.filter(municipio => municipio.uf === ufName);
-  const topEight = region.slice(0, 8);
-  const worstEight = region.slice(-8);
+  const topFive = region.slice(0, 5);
+  const worstFive = region.slice(-5);
 
-  return [topEight, worstEight];
+  return [topFive, worstFive];
+}
+
+function generatePagination(array, current) {
+  const totalPages = Math.floor(array.length / 15);
+  totalPages > 20 ? pages = 20 : pages = totalPages;
+
+  for (let index = 0; index < pages; index++) {
+    if (index === current) {
+      jQuery('#m-pagination').append(`<div class="pagination-anchor active" data-page="${index}">${index + 1}</div>`);
+    } else {
+      jQuery('#m-pagination').append(`<div class="pagination-anchor" data-page="${index}">${index + 1}</div>`);
+    }
+  }
+
+  const pesquisa = jQuery('input[name="search"]').val().toLowerCase();
+  const parsedPesquisa = pesquisa.replace(/ /g, '-');
+
+  if (totalPages > 20) {
+    if (pesquisa.length > 0) {
+      jQuery('#m-pagination').append(`<a class="pagination-anchor" href="${window.location.origin}/resultados-da-pesquisa/?ms=${parsedPesquisa}">...</a>`)
+    } else {
+      jQuery('#m-pagination').append(`<a class="pagination-anchor" href="${window.location.origin}/resultados-da-pesquisa/?ms=todos">...</a>`)
+    }
+  }
 }
 
 (function ($) {
@@ -81,8 +109,8 @@ function getBestAndWorstOfUf(ufName) {
     });
 
     // IBEU MUNICIPAL - estado inicial
-    if ($('#municipios-view-wrapper').length) {
-      for (let index = 0; index < 20; index++) {
+    if ($('.main-municipio-wrapper').length) {
+      for (let index = 0; index < 15; index++) {
         const element = municipios[index];
         const liHtml = generateListItemHtml(element.id, element.name, element.uf, element.ranking, element.ibeu, element.d1, element.d2, element.d3, element.d4, element.d5);
         $('#municipios-view-wrapper').append(liHtml);
@@ -92,60 +120,157 @@ function getBestAndWorstOfUf(ufName) {
       $('text[x="195"]').remove();
     }
 
+    // IBEU MUNICIPAL SINGLE - estado inicial
+    if ($('.single-municipio-wrapper').length) {
+      const queryString = window.location.search;
+      const urlParams = new URLSearchParams(queryString);
+      const dirtySearch = urlParams.get('ms').toLowerCase();
+      const municipioSearch = dirtySearch.replace(/-/g, ' ');
+      $('input[name="search"]').val(municipioSearch);
+
+      if (municipioSearch === 'todos') {
+        municipios.forEach(municipio => {
+          const liHtml = generateListItemHtml(municipio.id, municipio.name, municipio.uf, municipio.ranking, municipio.ibeu, municipio.d1, municipio.d2, municipio.d3, municipio.d4, municipio.d5);
+          $('#municipios-view-wrapper').append(liHtml);
+        });
+      } else {
+        municipios.forEach(municipio => {
+          if (municipio.name.toLowerCase().includes(municipioSearch) || municipio.uf.toLowerCase().includes(municipioSearch)) {
+            const liHtml = generateListItemHtml(municipio.id, municipio.name, municipio.uf, municipio.ranking, municipio.ibeu, municipio.d1, municipio.d2, municipio.d3, municipio.d4, municipio.d5);
+            $('#municipios-view-wrapper').append(liHtml);
+          }
+        });
+      }
+
+      if ($('#municipios-view-wrapper').children().length === 0) {
+        $('#municipios-view-wrapper').append(generateListTitle('Nenhum municipio encontrado.'));
+      }
+    }
+
     // IBEU MUNICIPAL - PESQUISAR MUNICIPIO
     $('#search-municipio').submit(function (e) {
       e.preventDefault();
+      //cleanup
       $('#municipios-view-wrapper').empty();
+      $('#m-pagination').empty();
+      const searchedList = [];
+
+      //setup
       const pesquisa = $('input[name="search"]').val().toLowerCase();
+
+      //make
       municipios.forEach(municipio => {
         if (municipio.name.toLowerCase().includes(pesquisa) || municipio.uf.toLowerCase().includes(pesquisa)) {
           const liHtml = generateListItemHtml(municipio.id, municipio.name, municipio.uf, municipio.ranking, municipio.ibeu, municipio.d1, municipio.d2, municipio.d3, municipio.d4, municipio.d5);
-          $('#municipios-view-wrapper').append(liHtml);
+          searchedList.push(liHtml);
         }
       });
+
+      for (let index = 0; index < 15; index++) {
+        $('#municipios-view-wrapper').append(searchedList[index]);
+      }
+
+      generatePagination(searchedList, 0);
+    });
+
+    $('#m-pagination').on('click', 'div.pagination-anchor', function () {
+      //cleanup
+      $('#municipios-view-wrapper').empty();
+      $('#m-pagination').empty();
+      const searchedList = [];
+
+      //setup
+      const pesquisa = $('input[name="search"]').val().toLowerCase();
+      const page = $(this).data('page');
+      const arrayIndex = page * 15;
+      const arrayEnd = arrayIndex + 15;
+
+      //make
+      municipios.forEach(municipio => {
+        if (municipio.name.toLowerCase().includes(pesquisa) || municipio.uf.toLowerCase().includes(pesquisa)) {
+          const liHtml = generateListItemHtml(municipio.id, municipio.name, municipio.uf, municipio.ranking, municipio.ibeu, municipio.d1, municipio.d2, municipio.d3, municipio.d4, municipio.d5);
+          searchedList.push(liHtml);
+        }
+      });
+
+      for (let index = arrayIndex; index < arrayEnd; index++) {
+        $('#municipios-view-wrapper').append(searchedList[index]);
+      }
+
+      generatePagination(searchedList, page);
     });
 
     //IBEU MUNICIPAL - CLICAR MUNICIPIO
-    $('li.municipio-li').click(function () {
-      const municipioId = $(this).attr('id');
-      const municipio = getMunicipioById(municipioId);
-      const [best, worst] = getBestAndWorstOfRegion(municipio.iduf);
-      simplemaps_countrymap.state_zoom("BRA1311");
-    });
+    // $('li.municipio-li').click(function () {
+    //   const municipioId = $(this).attr('id');
+    //   const municipio = getMunicipioById(municipioId);
+    //   const [best, worst] = getBestAndWorstOfRegion(municipio.iduf);
+    //   simplemaps_countrymap.state_zoom("BRA1311");
+    // });
 
     // IBEU MUNICIPAL - SORT
     $('.sort').click(function () {
+      //cleanup
       $('#municipios-view-wrapper').empty();
+      $('#m-pagination').empty();
+      $('.list-heading div').removeClass('active');
       $('.sort').removeClass('active');
       $(this).addClass('active');
+
+      //setup
       const sortBy = $(this).data('sortby');
       const pesquisa = $('input[name="search"]').val().toLowerCase();
-
       const sortedMunicipios = sortMunicipiosBy(sortBy);
+      const sortedList = [];
 
-      let counter = 0;
+      //create
+      $(`#s-${sortBy}`).addClass('active');
+
       sortedMunicipios.forEach(municipio => {
-        if (counter > 30) {
-          return;
-        }
         if (municipio.name.toLowerCase().includes(pesquisa) || municipio.uf.toLowerCase().includes(pesquisa)) {
           const liHtml = generateListItemHtml(municipio.id, municipio.name, municipio.uf, municipio.ranking, municipio.ibeu, municipio.d1, municipio.d2, municipio.d3, municipio.d4, municipio.d5);
-          $('#municipios-view-wrapper').append(liHtml);
-          counter++;
+          sortedList.push(liHtml);
         }
       });
+
+      if ($('.single-municipio-wrapper').length) {
+        for (let index = 0; index < sortedList.length; index++) {
+          $('#municipios-view-wrapper').append(sortedList[index]);
+        }
+      } else {
+        for (let index = 0; index < 15; index++) {
+          $('#municipios-view-wrapper').append(sortedList[index]);
+        }
+
+        generatePagination(sortedList, 0);
+      }
+
+    });
+
+    $('#map_outer').click(function () {
+      $(this).removeClass('active');
     });
 
     // IBEU MUNICIPAL - CLICAR ESTADO
     simplemaps_countrymap.hooks.zoomable_click_state = async function (id) {
+      //cleanup
       $('#municipios-map-wrapper').empty();
       sortMunicipiosBy("ranking");
-      const state = simplemaps_countrymap_mapdata.state_specific[id];
-      const [topEight, worstEight] = getBestAndWorstOfUf(state.name);
+      $('#map-initial-interface').addClass('hide');
+      $('#map-ranking-interface').addClass('active');
 
+      //setup
+      const state = simplemaps_countrymap_mapdata.state_specific[id];
+      const [topFive, worstFive] = getBestAndWorstOfUf(state.name);
+      $('#state-name').text(state.name);
+      $('#map_outer').addClass('active');
+      const parsedPesquisa = state.name.replace(/ /g, '-');
+      const stateUrl = `${window.location.origin}/resultados-da-pesquisa/?ms=${parsedPesquisa}`;
       let allPins = {};
 
-      topEight.forEach(element => {
+      //populate
+      $('#municipios-map-wrapper').append(generateListTitle('Municipios com maior ranking do estado'));
+      topFive.forEach(element => {
         const elementHtml = generateShortListItemHtml(element.id, element.name, element.ranking, element.ibeu);
         $('#municipios-map-wrapper').append(elementHtml);
 
@@ -160,7 +285,8 @@ function getBestAndWorstOfUf(ufName) {
         }
       });
 
-      worstEight.forEach(element => {
+      $('#municipios-map-wrapper').append(generateListTitle('Municipios com pior ranking do estado'));
+      worstFive.forEach(element => {
         const elementHtml = generateShortListItemHtml(element.id, element.name, element.ranking, element.ibeu);
         $('#municipios-map-wrapper').append(elementHtml);
 
@@ -175,10 +301,20 @@ function getBestAndWorstOfUf(ufName) {
         }
       });
 
+      $('#state-url').text(`Veja todos os municipios de ${state.name}`).attr('href', stateUrl);
+
+      //deploy
       simplemaps_countrymap_mapdata.locations = allPins;
       simplemaps_countrymap.refresh();
+
+      //post-process
       $('text[x="195"]').remove();
     };
+
+    $('#map-ranking-interface button').click(function () {
+      $('#map-initial-interface').removeClass('hide');
+      $('#map-ranking-interface').removeClass('active');
+    });
 
   });
 })(jQuery);
