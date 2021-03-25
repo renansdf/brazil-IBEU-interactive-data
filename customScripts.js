@@ -75,7 +75,7 @@ function getBestAndWorstOfUf(ufName) {
 
 function generatePagination(array, current) {
   const totalPages = Math.floor(array.length / 15);
-  totalPages > 20 ? pages = 20 : pages = totalPages;
+  totalPages > 10 ? pages = 10 : pages = totalPages;
 
   for (let index = 0; index < pages; index++) {
     if (index === current) {
@@ -88,7 +88,7 @@ function generatePagination(array, current) {
   const pesquisa = jQuery('input[name="search"]').val().toLowerCase();
   const parsedPesquisa = pesquisa.replace(/ /g, '-');
 
-  if (totalPages > 20) {
+  if (totalPages > 10) {
     if (pesquisa.length > 0) {
       jQuery('#m-pagination').append(`<a class="pagination-anchor" href="${window.location.origin}/resultados-da-pesquisa/?ms=${parsedPesquisa}">...</a>`)
     } else {
@@ -200,14 +200,6 @@ function generatePagination(array, current) {
       generatePagination(searchedList, page);
     });
 
-    //IBEU MUNICIPAL - CLICAR MUNICIPIO
-    // $('li.municipio-li').click(function () {
-    //   const municipioId = $(this).attr('id');
-    //   const municipio = getMunicipioById(municipioId);
-    //   const [best, worst] = getBestAndWorstOfRegion(municipio.iduf);
-    //   simplemaps_countrymap.state_zoom("BRA1311");
-    // });
-
     // IBEU MUNICIPAL - SORT
     $('.sort').click(function () {
       //cleanup
@@ -269,7 +261,7 @@ function generatePagination(array, current) {
       let allPins = {};
 
       //populate
-      $('#municipios-map-wrapper').append(generateListTitle('Municipios com maior ranking do estado'));
+      $('#municipios-map-wrapper').append(generateListTitle('Municipios com IBEU mais alto da UF'));
       topFive.forEach(element => {
         const elementHtml = generateShortListItemHtml(element.id, element.name, element.ranking, element.ibeu);
         $('#municipios-map-wrapper').append(elementHtml);
@@ -285,7 +277,7 @@ function generatePagination(array, current) {
         }
       });
 
-      $('#municipios-map-wrapper').append(generateListTitle('Municipios com pior ranking do estado'));
+      $('#municipios-map-wrapper').append(generateListTitle('Municipios com IBEU mais baixo da UF'));
       worstFive.forEach(element => {
         const elementHtml = generateShortListItemHtml(element.id, element.name, element.ranking, element.ibeu);
         $('#municipios-map-wrapper').append(elementHtml);
@@ -315,6 +307,10 @@ function generatePagination(array, current) {
       $('#map-initial-interface').removeClass('hide');
       $('#map-ranking-interface').removeClass('active');
     });
+
+
+    // HOME ARTICLES
+    $('#home-articles a.nectar-button span').text('Ver dados');
 
   });
 })(jQuery);

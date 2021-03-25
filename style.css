@@ -314,3 +314,52 @@ li.municipio-li.list-title div{
     margin-bottom: 10px;
     border: none;
 }
+
+.dl-link-a{
+    background: red;
+}
+
+.dl-link-b{
+    background: green;
+}
+
+.dl-link-c{
+    background: darkblue;
+}
+
+
+.dl-link-d{
+    background: purple;
+}
+
+.dl-link h2{
+    color: #fff;
+}
+
+.dl-link{
+    color: #fff;
+    padding: 20px 40px 40px;
+    border: 10px solid #fff;
+    border-radius: 25px;
+}
+
+text[x="195"] {
+    display: none;
+}
+
+#footer-outer #footer-widgets .row{
+    padding-bottom: 0;
+}
+
+#footer-outer #footer-widgets .row .col h4{
+    font-size: 21px;
+}
+
+#footer-outer #footer-widgets .row .col p{
+    padding-bottom: 9px;
+}
+
+#footer-outer #footer-widgets .row .col p a{
+    font-size: 19px;
+    line-height: 1.2em;
+}
