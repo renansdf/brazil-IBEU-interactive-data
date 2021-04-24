@@ -97,6 +97,21 @@ function generatePagination(array, current) {
   }
 }
 
+function generateSearchCSV(municipiosList, linkElement, municipioName){
+  let csvContent = "data:text/csv;charset=utf-8,Municipio,UF,Ranking,IBEU,Mobilidade,Ambiental,Habitacional,Serviços,Insfraestrutura\r\n";
+  
+  municipiosList.forEach(function(rowObject) {
+    let row = rowObject.name + ',' + rowObject.uf + ',' + rowObject.ranking + ',' + rowObject.ibeu + ',' + rowObject.d1 + ',' + rowObject.d2 + ',' + rowObject.d3 + ',' + rowObject.d4 + ',' + rowObject.d5;
+    csvContent += row + "\r\n";
+  });
+  
+  const encodedUri = encodeURI(csvContent);
+  linkElement.attr('href', encodedUri);
+
+  let fileName = municipioName + '.csv';
+  linkElement.attr('download', fileName);
+}
+
 (function ($) {
   $(document).ready(function () {
 
@@ -128,23 +143,29 @@ function generatePagination(array, current) {
       const municipioSearch = dirtySearch.replace(/-/g, ' ');
       $('input[name="search"]').val(municipioSearch);
 
+      let municipiosList = [];
+
       if (municipioSearch === 'todos') {
         municipios.forEach(municipio => {
           const liHtml = generateListItemHtml(municipio.id, municipio.name, municipio.uf, municipio.ranking, municipio.ibeu, municipio.d1, municipio.d2, municipio.d3, municipio.d4, municipio.d5);
           $('#municipios-view-wrapper').append(liHtml);
         });
+        municipiosList = municipios;
       } else {
         municipios.forEach(municipio => {
           if (municipio.name.toLowerCase().includes(municipioSearch) || municipio.uf.toLowerCase().includes(municipioSearch)) {
             const liHtml = generateListItemHtml(municipio.id, municipio.name, municipio.uf, municipio.ranking, municipio.ibeu, municipio.d1, municipio.d2, municipio.d3, municipio.d4, municipio.d5);
             $('#municipios-view-wrapper').append(liHtml);
-          }
+            municipiosList.push(municipio);
+        }
         });
       }
 
       if ($('#municipios-view-wrapper').children().length === 0) {
         $('#municipios-view-wrapper').append(generateListTitle('Nenhum municipio encontrado.'));
       }
+
+      generateSearchCSV(municipiosList, $('#results-download'), municipioSearch);
     }
 
     // IBEU MUNICIPAL - PESQUISAR MUNICIPIO
